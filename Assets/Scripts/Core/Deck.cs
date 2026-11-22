@@ -24,6 +24,12 @@ namespace PokerDemo.Core
             Shuffle();
         }
 
+        // Cards come out in the order given, no shuffle. Used by the tests.
+        public Deck(IEnumerable<Card> orderedCards)
+        {
+            cards.AddRange(orderedCards);
+        }
+
         // Fisher-Yates shuffle using a crypto RNG so the order can't be guessed from earlier hands.
         public void Shuffle()
         {

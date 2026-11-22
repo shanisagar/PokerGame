@@ -37,6 +37,9 @@ namespace PokerDemo.Core
             Suit = suit;
         }
 
+        // Short form like "As" or "Td", used when cards are sent over the network.
+        public string Code => "23456789TJQKA"[(int)Rank - 2].ToString() + "cdhs"[(int)Suit];
+
         public override string ToString()
         {
             return Rank + " of " + Suit;

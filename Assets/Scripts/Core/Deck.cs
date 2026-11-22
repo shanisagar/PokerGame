@@ -6,6 +6,8 @@ namespace PokerDemo.Core
 {
     public class Deck
     {
+        private static readonly Random fallbackRandom = new Random(Guid.NewGuid().GetHashCode());
+
         private readonly List<Card> cards = new List<Card>(52);
         private int nextIndex;
 
@@ -35,13 +37,27 @@ namespace PokerDemo.Core
         {
             for (int i = cards.Count - 1; i > 0; i--)
             {
-                int j = RandomNumberGenerator.GetInt32(i + 1);
+                int j = RandomIndex(i + 1);
                 Card temp = cards[i];
                 cards[i] = cards[j];
                 cards[j] = temp;
             }
 
             nextIndex = 0;
+        }
+
+        // The crypto generator is not available on every platform (WebGL is the doubtful one),
+        // so fall back to the normal one instead of breaking the game.
+        private static int RandomIndex(int maxExclusive)
+        {
+            try
+            {
+                return RandomNumberGenerator.GetInt32(maxExclusive);
+            }
+            catch (Exception)
+            {
+                return fallbackRandom.Next(maxExclusive);
+            }
         }
 
         public Card Draw()

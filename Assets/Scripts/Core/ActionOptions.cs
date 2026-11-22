@@ -1,6 +1,9 @@
+using System;
+
 namespace PokerDemo.Core
 {
     // What the current player is allowed to do. The UI and bots both read this.
+    [Serializable]
     public struct ActionOptions
     {
         public bool CanFold;

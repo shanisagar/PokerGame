@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace PokerDemo.Core
 {
@@ -34,9 +35,30 @@ namespace PokerDemo.Core
             return 0;
         }
 
+        // "TwoPair" becomes "Two Pair".
+        public string Name
+        {
+            get
+            {
+                string text = Rank.ToString();
+                var result = new StringBuilder();
+                for (int i = 0; i < text.Length; i++)
+                {
+                    if (i > 0 && char.IsUpper(text[i]))
+                    {
+                        result.Append(' ');
+                    }
+
+                    result.Append(text[i]);
+                }
+
+                return result.ToString();
+            }
+        }
+
         public override string ToString()
         {
-            return Rank.ToString();
+            return Name;
         }
     }
 }

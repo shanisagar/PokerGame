@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using PokerDemo.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -106,6 +107,75 @@ namespace PokerDemo.Tests
             Assert.AreEqual(20, hand.Winnings[0]);
             Assert.AreEqual(1010, seats[0].Stack);
             Assert.AreEqual(990, seats[1].Stack);
+        }
+
+        // Plays many hands with random but legal actions. Whatever happens, the chips on the table
+        // must stay the same, and everything the options allow must really be accepted.
+        [Test]
+        public void RandomPlay_NeverCreatesOrLosesChips()
+        {
+            var random = new Random(7);
+
+            for (int game = 0; game < 400; game++)
+            {
+                int playerCount = random.Next(2, 7);
+                var seats = new List<BettingSeat>();
+                for (int i = 0; i < playerCount; i++)
+                {
+                    seats.Add(new BettingSeat(i, random.Next(1, 60) * 5));
+                }
+
+                int chipsBefore = seats.Sum(s => s.Stack);
+                var hand = new Hand(seats, random.Next(-1, playerCount), 6, 10, 20, new Deck());
+
+                for (int turn = 0; turn < 500 && !hand.IsFinished; turn++)
+                {
+                    int seat = hand.CurrentSeat;
+                    Assert.GreaterOrEqual(seat, 0, "an unfinished hand must have someone to act");
+
+                    string error;
+                    PlayerAction action = RandomLegalAction(hand.GetOptions(seat), random);
+                    Assert.IsTrue(hand.TryAct(seat, action, out error), action.Type + " " + action.Amount + ": " + error);
+                }
+
+                Assert.IsTrue(hand.IsFinished, "hand " + game + " never finished");
+                Assert.AreEqual(chipsBefore, seats.Sum(s => s.Stack), "chips changed in hand " + game);
+            }
+        }
+
+        internal static PlayerAction RandomLegalAction(ActionOptions options, Random random)
+        {
+            var choices = new List<PlayerAction>();
+
+            if (options.CanFold)
+            {
+                choices.Add(new PlayerAction(ActionType.Fold));
+            }
+
+            if (options.CanCheck)
+            {
+                choices.Add(new PlayerAction(ActionType.Check));
+                choices.Add(new PlayerAction(ActionType.Check));
+            }
+
+            if (options.CanCall)
+            {
+                choices.Add(new PlayerAction(ActionType.Call));
+                choices.Add(new PlayerAction(ActionType.Call));
+            }
+
+            if (options.CanRaise)
+            {
+                int amount = random.Next(options.MinRaiseTo, options.MaxRaiseTo + 1);
+                choices.Add(new PlayerAction(ActionType.Raise, amount));
+            }
+
+            if (options.CanAllIn)
+            {
+                choices.Add(new PlayerAction(ActionType.AllIn));
+            }
+
+            return choices[random.Next(choices.Count)];
         }
 
         [Test]

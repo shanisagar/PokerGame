@@ -33,7 +33,7 @@ namespace PokerDemo.Core
         }
 
         // Fisher-Yates shuffle using a crypto RNG so the order can't be guessed from earlier hands.
-        public void Shuffle()
+        private void Shuffle()
         {
             for (int i = cards.Count - 1; i > 0; i--)
             {

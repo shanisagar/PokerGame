@@ -2,7 +2,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace PokerDemo.Network
@@ -26,9 +25,6 @@ namespace PokerDemo.Network
         public bool InRoom => PhotonNetwork.InRoom;
         public string RoomCode => PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "";
         public IEnumerable<RoomInfo> Rooms => rooms.Values;
-
-        public IEnumerable<string> PlayerNames =>
-            PhotonNetwork.PlayerList.Select(p => p.NickName + (p.IsLocal ? " (you)" : ""));
 
         private void Start()
         {
@@ -94,7 +90,8 @@ namespace PokerDemo.Network
 
         public void LeaveRoom()
         {
-            PhotonNetwork.LeaveRoom();
+            // false means we really leave. The default keeps our seat for the 2 minute reconnect window.
+            PhotonNetwork.LeaveRoom(false);
         }
 
         // Four letters, no I or O so the code is easy to read out loud.

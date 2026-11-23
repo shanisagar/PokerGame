@@ -76,8 +76,9 @@ namespace PokerDemo.UI
                 return;
             }
 
-            tableCodeText.text = "Table " + network.RoomCode;
             noticeText.text = table.Notice;
+
+            tableCodeText.text = "Table " + network.RoomCode;
 
             TableSnapshot snapshot = table.Snapshot;
             if (snapshot == null)
@@ -153,7 +154,11 @@ namespace PokerDemo.UI
         private void DrawTexts(TableSnapshot snapshot, SeatSnapshot me)
         {
             messageText.text = snapshot.message;
-            potText.text = snapshot.handNumber == 0 ? "" : StageNames[snapshot.stage] + "     Pot " + snapshot.pot;
+            potText.text = "Blinds " + snapshot.smallBlind + "/" + snapshot.bigBlind;
+            if (snapshot.handNumber > 0)
+            {
+                potText.text += "     " + StageNames[snapshot.stage] + "     Pot " + snapshot.pot;
+            }
 
             SeatSnapshot current = snapshot.seats.FirstOrDefault(s => s.seat == snapshot.currentSeat);
             if (snapshot.handActive && current != null)

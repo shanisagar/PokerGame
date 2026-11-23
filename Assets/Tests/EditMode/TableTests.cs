@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using PokerDemo.Core;
+using System;
 using System.Linq;
 
 namespace PokerDemo.Tests
@@ -228,6 +229,39 @@ namespace PokerDemo.Tests
 
             Assert.IsNotNull(newPlayer);
             Assert.AreEqual(4, table.Players.Count(p => p.IsBot));
+        }
+
+        // A random human against two bots for many hands, including going broke and restarting.
+        [Test]
+        public void Table_KeepsPlaying_WithBotsAndARandomHuman()
+        {
+            Table table = TableWith(1);
+            table.StartGame();
+            var random = new Random(11);
+
+            for (int i = 0; i < 20000 && table.HandNumber < 40; i++)
+            {
+                TableSnapshot snapshot = table.BuildSnapshot();
+                string error;
+
+                if (snapshot.handActive)
+                {
+                    TablePlayer current = table.Players.First(p => p.Seat == snapshot.currentSeat);
+                    if (!current.IsBot)
+                    {
+                        PlayerAction action = HandTests.RandomLegalAction(snapshot.options, random);
+                        Assert.IsTrue(table.TryAct(current.Id, action, out error), action.Type + ": " + error);
+                    }
+                }
+                else if (snapshot.seats.First(s => s.playerId == 100).spectating)
+                {
+                    Assert.IsTrue(table.Restart(100, out error), error);
+                }
+
+                table.Tick(1f);
+            }
+
+            Assert.GreaterOrEqual(table.HandNumber, 40);
         }
 
         [Test]

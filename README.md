@@ -43,6 +43,8 @@ no purchases and no loot boxes of any kind.
 4. The browser tab of the **table host** (the player who created the table) must stay in the foreground.
    Browsers slow down background tabs, which would stall the turn timer for everyone.
 
+Only the PUN 2 core is included. Photon's demo games and its chat package were removed to keep the repository small.
+
 **Photon App ID.** The App ID of the author's Photon app is stored in
 `Assets/Photon/PhotonUnityNetworking/Resources/PhotonServerSettings.asset`, so the game connects out of the box.
 To use your own app, create a free **PUN** app on the Photon dashboard and paste its App ID there
@@ -74,7 +76,7 @@ join so there is someone to play against. The host can also add or remove bots w
 | Hidden cards | Look at each window. Only your own two cards are face up. |
 | Turn timer | Let your turn run out (30 seconds). You check if it is free, otherwise you fold. |
 | Disconnect and return | In a build, switch off the network for about 20 seconds, switch it on and press **Reconnect**. |
-| Leaving mid-hand | Close one copy during a hand. That player is folded at once. |
+| Leaving mid-hand | Press **Leave table** during a hand. That player is folded at once. Closing the window instead counts as a dropped connection (see the disconnect row). |
 | Joining mid-hand | Join while a hand is running. You watch until the next hand. |
 | Running out of chips | Lose all your chips. You become a spectator and get a **Restart with 1,000 chips** button. |
 | Side pots | Let players with different chip counts go all-in. The result text and winnings show each pot. |
@@ -189,6 +191,8 @@ Open `Window > General > Test Runner`, choose **EditMode** and run all. The test
 - main and side pots, folded chips, uncalled bets, the odd chip rule,
 - betting rules: minimum raise, short all-in not reopening betting, check and call rules,
 - a full hand and all-in hands through every stage,
+- randomized play: hundreds of hands with random legal actions and random stack sizes (including stacks too small
+  for the blinds), checking that chips are never created or lost and that every action the options allow is accepted,
 - the table: hidden cards in snapshots, wrong-turn actions, timeouts, reconnecting, leaving, restarting, bots,
 - bot behaviour (legal actions only, never folding when checking is free, the two levels differing),
 - stats and the break timer.

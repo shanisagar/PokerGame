@@ -62,7 +62,8 @@ namespace PokerDemo.Core
                 CanRaise = s.NeedsToAct && maxTo > CurrentBet,
                 MinRaiseTo = Math.Min(MinRaiseTo, maxTo),
                 MaxRaiseTo = maxTo,
-                CanAllIn = s.Stack > 0
+                // Going all-in is a raise if it passes the current bet, so it needs the same right as a raise.
+                CanAllIn = s.Stack > 0 && (s.NeedsToAct || maxTo <= CurrentBet)
             };
         }
 

@@ -74,6 +74,7 @@ namespace PokerDemo.Tests
 
             Assert.AreEqual(0, round.CurrentSeat);
             Assert.IsFalse(round.GetOptions(0).CanRaise);
+            Assert.IsFalse(round.GetOptions(0).CanAllIn); // that would be a raise too
             Assert.IsFalse(round.TryApply(0, new PlayerAction(ActionType.Raise, 300), out error));
 
             Assert.IsTrue(round.TryApply(0, new PlayerAction(ActionType.Call), out error));
